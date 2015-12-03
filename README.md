@@ -7,3 +7,4 @@ those with
 ```bash
 cat input | sed -f sol.__.sed
 ```
+They've been tested with BSD sed and GNU sed on OS X, as well as GNU sed on Linux.
