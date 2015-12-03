@@ -1,0 +1,1 @@
+cat input.2 | awk -Fx 'function min2(a,b){if(a<b) {return a} else {return b}} function min(a,b,c) { return min2(min2(a,b),c) } {s1=$1*$2; s2=$1*$3; s3=$2*$3; x+=2*s1+2*s2+2*s3+min(s1,s2,s3)} END {print x}'

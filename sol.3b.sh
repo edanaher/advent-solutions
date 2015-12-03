@@ -1,0 +1,1 @@
+cat input.3 | grep -o . | awk 'BEGIN { dx[">"] = 1; dx["<"] = -1; dy["v"] = 1; dy["^"] = -1; x[0]=x[1]=0; y[0]=y[1]=0; w=0; print x[w]","y[w] } { x[w]+=dx[$1]; y[w]+=dy[$1]; print x[w]","y[w]; w = 1-w}' | sort | uniq | wc -l
