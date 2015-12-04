@@ -7,7 +7,7 @@ s/$/|___|_@_|___|/
 :loop
 # Move Santa left or right
 s/^\(>[^@]*\)@./\1*@/
-s/^\(<[^@]*\).@/\2@*/
+s/^\(<[^@]*\).@/\1@*/
 
 # Move Santa down
 s/^\(v[^@]*\)|\([^|@]*\)@\([^|]*\)|/\1|#\2@\3|#/
@@ -71,7 +71,7 @@ t resetcondfinish
 :resetcondfinish
 
 s/^[v^<>]/&/
-t loop 
+t loop
 
 # And now it's time to count the gifts.
 # Clear out all non-gifts, and make Santa a gift for convenience
