@@ -1,26 +1,29 @@
+# This is a bit on the slow side; a bit over 2 minutes for my 8k input.
+# But so cute!
+
 # Initialize the board
 s/$/|___|_@_|___|/
 
 :loop
 # Move Santa left or right
-s/^\(>.*\)@./\1*@/
-s/^\(<.*\).@/\1@*/
+s/^\(>[^@]*\)@./\1*@/
+s/^\(<[^@]*\).@/\2@*/
 
 # Move Santa down
-s/^\(v.*\)|\([^|@]*\)@\([^|]*\)|/\1|#\2@\3|#/
+s/^\(v[^@]*\)|\([^|@]*\)@\([^|]*\)|/\1|#\2@\3|#/
 t downloop
 :downloop
-s/^\(v.*\)#@\([^#]*\)#./\1*\2@/
+s/^\(v[^#]*\)#@\([^#]*\)#./\1*\2@/
 t downdone
 s/#\(.\)/\1#/g
 t downloop
 :downdone
 
 # Move Santa up
-s/^\(\^.*\)|\([^|@]*\)@\([^|]*\)|/\1#|\2@\3#|/
+s/^\(\^[^@]*\)|\([^|@]*\)@\([^|]*\)|/\1#|\2@\3#|/
 t uploop
 :uploop
-s/^\(\^.*\).#\([^@]*\)@#/\1@\2*/
+s/^\(\^[^#]*\).#\([^@]*\)@#/\1@\2*/
 t updone
 s/\(.\)#/#\1/g
 t uploop
