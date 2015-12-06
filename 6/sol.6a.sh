@@ -1,0 +1,1 @@
+cat input.6 | sed 's/,/ /g; s/turn//' | awk '{for(r = $2; r <= $5; r++) { for(c = $3; c <= $6; c++) { if($1 == "toggle") { a[r][c] = 1 - a[r][c] } else if ($1 == "on") { a[r][c] = 1 } else { a[r][c] = 0 }} }} END { for(r = 0; r < 1000; r++) { for(c = 0; c < 1000; c++) { if(a[r][c] == 1) { count++ } } } print count}'
