@@ -1,4 +1,4 @@
-# This is a bit on the slow side; a bit over 2 minutes for my 8k input.
+# This is a bit on the slow side; about a minute for my 8k input.
 # But so cute!
 
 # Initialize the board
@@ -10,24 +10,26 @@ s/^\(>[^@]*\)@./\1*@/
 s/^\(<[^@]*\).@/\1@*/
 
 # Move Santa down
-s/^\(v[^@]*\)|\([^|@]*\)@\([^|]*\)|/\1|#\2@\3|#/
-t downloop
-:downloop
-s/^\(v[^#]*\)#@\([^#]*\)#./\1*\2@/
-t downdone
-s/#\(.\)/\1#/g
-t downloop
-:downdone
+/^v/ {
+  s/|\([^|@]*\)@\([^|]*\)|/|#\1@\2|#/
+  :downloop
+  /#@/ b downfound
+  s/#\(.\)/\1#/g
+  b downloop
+  :downfound
+  s/#@\([^#]*\)#./*\1@/
+}
 
 # Move Santa up
-s/^\(\^[^@]*\)|\([^|@]*\)@\([^|]*\)|/\1#|\2@\3#|/
-t uploop
-:uploop
-s/^\(\^[^#]*\).#\([^@]*\)@#/\1@\2*/
-t updone
-s/\(.\)#/#\1/g
-t uploop
-:updone
+/^\^/ {
+  s/|\([^|@]*\)@\([^|]*\)|/#|\1@\2#|/
+  :uploop
+  /@#/ b upfound
+  s/\(.\)#/#\1/g
+  b uploop
+  :upfound
+  s/.#\([^@]*\)@#/@\1*/
+}
 
 # Print this move
 h; s/^\(.\).*/\1/; p; g
@@ -41,23 +43,8 @@ s/^\([^|]*\)|\([^|@]*\)@\([^|]*\)/\1|\2_\3|\2@\3/
 s/^\(.*|\)\([^|@]*\)@\([^|]*|\)$/\1\2@\3\2_\3/
 
 # Add another empty column on the left or right if necessary
-t resetcondleft
-:resetcondleft
-s/|@/&/
-t addleft
-b checkright
-:addleft
-s/|\(.\)/|_\1/g
-
-:checkright
-t resetcondright
-:resetcondright
-s/@|/&/
-t addright
-b noright
-:addright
-s/\([_*@]\)|/\1_|/g
-:noright
+/|@/ s/|\(.\)/|_\1/g
+/@|/ s/\([_*@]\)|/\1_|/g
 
 # Save state, remove remaining moves, print board, and restore
 h
@@ -67,11 +54,7 @@ s/|/\
 p
 g
 
-t resetcondfinish
-:resetcondfinish
-
-s/^[v^<>]/&/
-t loop
+/^[v^<>]/ b loop
 
 # And now it's time to count the gifts.
 # Clear out all non-gifts, and make Santa a gift for convenience
