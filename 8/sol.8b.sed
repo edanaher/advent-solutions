@@ -12,19 +12,19 @@ x; G; s/\n//
 t countoriglength
 :countoriglength
 /|$/ b escapestring
-# Add one to a positive
-s/^\([0-9]*\)\([0-9]\)!\([^|]*\2\(.\)\)/\1\4!\3/
-# Add one to a negative
-s/^\(-[0-9]*\)\([0-9]\)!\([^|]*\(.\)\2\)/\1\4!\3/
-t carryadd
-:carryadd
+# Subtract one from a positive
+s/^\([0-9]*\)\([0-9]\)!\([^|]*\([^|]\)\2\)/\1\4!\3/
+# Subtract one from a negative
+s/^\(-[0-9]*\)\([0-9]\)!\([^|]*\2\(.\)\)/\1\4!\3/
+t carrysub
+:carrysub
 s/^\(-*\)@/\110/
 s/^\([^!]*\)\(.\)@\([^!]*![^|]*\2\(.\)\)/\1\40\3/
-s/^\([^!]*\)\(.\)#\([^!]*![^|]*\(.\)\2\)/\1\49\3/
-s/^-0\([^!]\)/-\1/
+s/^\([^!]*\)\(.\)#\([^!]*![^|]*\([^|]\)\2\)/\1\49\3/
+s/^#/-1/
 s/^-0!/0!/
 s/^0\([^!]\)/\1/
-t carryadd
+t carrysub
 
 s/|./|/
 b countoriglength
@@ -32,28 +32,27 @@ b countoriglength
 :escapestring
 # Now put the string back and escape it.
 G; s/\n//
-s/\\\([\\"]\)/_/g
-s/\\x[0-9a-f][0-9a-f]/_/g
-s/"$//
-s/|"/|/
+s/[\\"]/__/g
+s/$/"/
+s/|/|"/
 
 # Now subtract one for each escaped character...
 t countescapedlength
 :countescapedlength
 /|$/ b nextline
-# Subtract one from a positive
-s/^\([0-9]*\)\([0-9]\)!\([^|]*\(.\)\2\)/\1\4!\3/
-# Subtract one from a negative
-s/^\(-[0-9]*\)\([0-9]\)!\([^|]*\2\(.\)\)/\1\4!\3/
-t carrysub
-:carrysub
+# Add one to a positive
+s/^\([0-9]*\)\([0-9]\)!\([^|]*\2\(.\)\)/\1\4!\3/
+# Add one to a negative
+s/^\(-[0-9]*\)\([0-9]\)!\([^|]*\([^|]\)\2\)/\1\4!\3/
+t carryadd
+:carryadd
 s/^\(-*\)@/\110/
-s/^\([^!]*\)\(.\)@\([^!]*![^|]*\2\(.\)\)/\1\40\3/
-s/^\([^!]*\)\(.\)#\([^!]*![^|]*\(.\)\2\)/\1\49\3/
-s/^#/-1/
+s/^\([^!]*\)\([^!]\)@\([^!]*![^|]*\2\(.\)\)/\1\40\3/
+s/^\([^!]*\)\([^!]\)#\([^!]*![^|]*\([^|]\)\2\)/\1\49\3/
+s/^-0\([^!]\)/-\1/
 s/^-0!/0!/
 s/^0\([^!]\)/\1/
-t carrysub
+t carryadd
 
 s/|./|/
 b countescapedlength
