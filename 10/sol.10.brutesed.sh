@@ -1,0 +1,1 @@
+i=`cat input.10`; time for j in {1..50}; do i=`echo $i | sed 's/111/ca/g; s/222/cb/g; s/333/cc/g; s/11/ba/g; s/22/bb/g; s/33/bc/g; s/1/aa/g; s/2/ab/g; s/3/ac/g; s/a/1/g; s/b/2/g; s/c/3/g'`; echo -n $i | wc -c; done
