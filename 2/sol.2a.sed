@@ -69,10 +69,38 @@
 
   # If we're up to 100, we're done building the table; move on!
   /&buildmulttable 100/ {
-    s/&buildmulttable 100[^;]*;/\&add(100,400);/
+    s/&buildmulttable 100[^;]*;/\&multiply(345,942);/
+    p
   }
 
 }
+
+/&multiplydigits([0-9],[0-9])/ {
+  s/&multiplydigits(\([0-9]\),\([0-9]\))\([^M]*M.*\1\2=\([0-9]*\),\)/\4\3/
+  p
+}
+
+
+/&multiplydigit([0-9],[0-9]*)/ {
+  s/&multiplydigit(\([0-9],[0-9]*\))/\&multiplydigitacc(\1,0)/
+  p
+}
+
+/&multiplydigitacc([0-9],[0-9][0-9]*,[0-9]*)/ {
+  s/&multiplydigitacc(\([0-9]\),\([0-9]\)\([0-9]*\),\([0-9]*\))/\&multiplydigitacc(\1,\3,\&add(\40,\&multiplydigits(\1,\2)))/
+}
+s/&multiplydigitacc([0-9],,\([0-9]*\))/\1/
+
+/&multiply([0-9]*,[0-9]*)/ {
+  s/multiply(\([0-9]*,[0-9]*\))/multiplyacc(\1,0)/
+  p
+}
+
+/&multiplyacc([0-9][0-9]*,[0-9]*,[0-9]*)/ {
+  s/&multiplyacc(\([0-9]\)\([0-9]*\),\([0-9]*\),\([0-9]*\))/\&multiplyacc(\2,\3,\&add(\40,\&multiplydigit(\1,\3)))/
+  p
+}
+s/&multiplyacc(,[0-9]*,0*\([0-9]*\))/\1/
 
 /&add([0-9]*,[0-9]*)/ {
   # Add position markers
@@ -117,5 +145,3 @@
 # If we changed anything, iterate again
 t begin
 p
-d
-# And add a negative sign if appropriate...
