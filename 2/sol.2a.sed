@@ -69,7 +69,8 @@
 
   # If we're up to 100, we're done building the table; move on!
   /&buildmulttable 100/ {
-    s/&buildmulttable 100[^;]*;/\&multiply(345,942);/
+    # Clean out the header so only the table is left
+    s/&buildmulttable 100[^;]*;/\&min(1234,1234)/
     p
   }
 
@@ -79,7 +80,6 @@
   s/&multiplydigits(\([0-9]\),\([0-9]\))\([^M]*M.*\1\2=\([0-9]*\),\)/\4\3/
   p
 }
-
 
 /&multiplydigit([0-9],[0-9]*)/ {
   s/&multiplydigit(\([0-9],[0-9]*\))/\&multiplydigitacc(\1,0)/
@@ -139,6 +139,36 @@ s/&multiplyacc(,[0-9]*,0*\([0-9]*\))/\1/
   }
   s/&carry(@\([^)]*\))/\&carry(10\1)/
   s/&carry(\([^)]*\))/\1/
+  p
+}
+
+/&min([0-9]*,[0-9]*)/ {
+  # If one side is shorter, choose that one, otherwise go to minaux
+  s/&min(\([0-9]*\),\([0-9]*\))/\&min(\1-,\2-)/
+  :count_digits_min
+  /-/ {
+    s/\(.\)-/-\1/g
+    s/\&min(-\([0-9]*\),-\([0-9]*\))/\&minaux(\1,\2,\1,\2)/
+    s/\&min(-\([0-9]*\),[^)]*)/\1/
+    s/\&min([^,]*,-\([0-9]*\))/\1/
+    b count_digits_min
+  }
+  p
+}
+
+# The inputs are both the same length at this point. \1,\2 are the working set,
+# \3,\4 are the original numbers
+/&minaux([0-9]*,[0-9]*,[0-9]*,[0-9]*)/ {
+  s/&minaux(0\([0-9]*\),0\([0-9]*\)\([^)]*)\)/\&minaux(\1,\2\3/
+  # If both sides have leading zeros, trim and continue
+  s/&minaux(0\([0-9]*\),0\([0-9]*\)\([^)]*)\)/\&minaux(\1,\2\3/
+  # If both sides are empty, they're equal, so just pick one.
+  s/&minaux(,,\([0-9]*\),[0-9]*)/\1/
+  # If only one side has a leading zero, it's smaller
+  s/&minaux(0[0-9]*,[^0][0-9]*,\([0-9]*\),[0-9]*)/\1/
+  s/&minaux([^0][0-9]*,0[0-9]*,[0-9]*,\([0-9]*\))/\1/
+  # Otherwise, decrement both first digits
+  s/&minaux(\([0-9]\)\([0-9]*\),\([0-9]\)\([^)]*)\)/\&minaux(\&dec(\1)\2,\&dec(\3)\4/
   p
 }
 
