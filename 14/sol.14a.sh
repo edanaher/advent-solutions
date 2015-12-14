@@ -1,0 +1,1 @@
+cat input.14 | sed 's/[^0-9 ]//g' | awk '{cycle=$2+$3; cycles=int(2503/cycle); cycledist=cycles*$1*$2; remaindertime=(2503-$cycles*cycletime); remainderdist=(remaindertime<$1?remaindertime:$1)*$2; print(cycledist+remainderdist)}' | sort -n
