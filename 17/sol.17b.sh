@@ -1,0 +1,1 @@
+cat input.17 | awk 'BEGIN { c[0] = 0 } {c[$1] = a[$1] == 1 ? 1 : c[$1]+1; a[$1] = 1; for(i=150; i >= $1; i--) {if(a[i-$1] && (!a[i] || a[i] > a[i-$1]+1)) {a[i] = a[i-$1]+1; c[i] = 1 } else if(a[i-$1] == a[i] - 1) c[i] += c[i-$1]}} END {print a[150]": "c[150]}'
