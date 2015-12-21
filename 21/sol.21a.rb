@@ -22,7 +22,7 @@ weapons.each do |w|
         next if r1 == r2
         items = [w, a, rings[r1], rings[r2]]
         stats = items.inject { |a, b| [a[0] + b[0], a[1] + b[1], a[2] + b[2]] }
-        turns = enemy[1] <= stats[2] ? 100 : (100 / (enemy[1] - stats[2])).floor
+        turns = (100 / [enemy[1] - stats[2], 1].max).floor
         damage = turns * ([stats[1] - enemy[2], 1].max)
         puts "#{stats.join(" ")} #{w.inspect} #{a.inspect} #{r1} #{r2} #{items.inspect} #{turns} #{damage}"
         if damage >= enemy[0]
@@ -35,3 +35,8 @@ weapons.each do |w|
   end
 end
 puts best
+
+
+# Apparently my answer was 121.  I got this by binary searching my first broken
+# guess of 111 and the answer this one gives, 131 (and getting very lucky to
+# get it on the first guess).
